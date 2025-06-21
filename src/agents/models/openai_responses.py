@@ -246,7 +246,7 @@ class OpenAIResponsesModel(Model):
             logger.debug(
                 f"Calling LLM {self.model} with input:\n"
                 f"{json.dumps(list_input, indent=2)}\n"
-                f"Tools:\n{json.dumps(converted_tools.tools, indent=2)}\n"
+                f"Tools:\n{json.dumps([x['name'] for x in converted_tools.tools], indent=2)}\n"
                 f"Stream: {stream}\n"
                 f"Tool choice: {tool_choice}\n"
                 f"Response format: {response_format}\n"

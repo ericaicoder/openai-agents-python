@@ -806,7 +806,8 @@ class AgentRunner:
         final_response: ModelResponse | None = None
 
         input = ItemHelpers.input_to_new_input_list(streamed_result.input)
-        input.extend([item.to_input_item() for item in streamed_result.new_items])
+        new_inputs = await hooks.on_custom_input(context_wrapper, agent, streamed_result.new_items)
+        input.extend(new_inputs)
 
         # 1. Stream the output events
         async for event in model.stream_response(
@@ -900,7 +901,8 @@ class AgentRunner:
         output_schema = cls._get_output_schema(agent)
         handoffs = cls._get_handoffs(agent)
         input = ItemHelpers.input_to_new_input_list(original_input)
-        input.extend([generated_item.to_input_item() for generated_item in generated_items])
+        new_inputs = await hooks.on_custom_input(context_wrapper, agent, generated_items)
+        input.extend(new_inputs)
 
         new_response = await cls._get_new_response(
             agent,

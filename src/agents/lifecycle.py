@@ -1,5 +1,6 @@
 from typing import Any, Generic
 
+from .items import RunItem, TResponseInputItem
 from .agent import Agent
 from .run_context import RunContextWrapper, TContext
 from .tool import Tool
@@ -9,6 +10,17 @@ class RunHooks(Generic[TContext]):
     """A class that receives callbacks on various lifecycle events in an agent run. Subclass and
     override the methods you need.
     """
+
+    async def on_custom_input(
+        self,
+        context: RunContextWrapper[TContext],
+        agent: Agent[TContext],
+        run_items: list[RunItem],
+    ) -> list[TResponseInputItem]:
+        """This is called before the agent is invoked, and allows you to modify the input before it
+        is passed to the LLM.
+        """
+        return [item.to_input_item() for item in run_items]
 
     async def on_agent_start(
         self, context: RunContextWrapper[TContext], agent: Agent[TContext]
